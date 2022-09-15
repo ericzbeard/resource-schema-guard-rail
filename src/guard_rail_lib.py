@@ -1,4 +1,5 @@
 
+from gc import get_referents
 import importlib.resources as pkg_resources
 import json
 import cfn_guard_rs
@@ -8,43 +9,15 @@ from rule_library import core, combiners
 from dataclasses import dataclass, field
 import importlib.resources as pkg_resources
 
-import logging
-from typing import Any, Dict, List
+
+from typing import Any, Dict, List, Sequence
 from common import is_guard_rule
 from ast import literal_eval
 from jinja2 import Environment, FileSystemLoader
 
-
-RULE_SET_LIST = ["schema-linter-core-rules.guard", "schema-linter-core-combiner-rules.guard"]
-
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)-12s %(message)s",
-    datefmt="%m-%d %H:%M",
-    filename="guard-rail.log",
-    filemode="w",
-)
+from logger import LOG, logdebug
 
 
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s: %(levelname)-8s - %(message).500s")
-console.setFormatter(formatter)
-logging.getLogger("").addHandler(console)
-
-LOG = logging.getLogger(__name__)
-
-def logdebug(func: object):
-    def wrapper(*args, **kwargs):
-        log_msg = func.__name__ 
-        entry_message = "{} started".format(log_msg)
-        LOG.info(entry_message)
-        result = func(*args, **kwargs)
-        exit_message = "{} complete".format(log_msg)
-        LOG.info(exit_message)
-        return result
-    return wrapper
 
 @dataclass
 class GuardRuleResult:
@@ -115,7 +88,6 @@ def exec_rules(schema: Dict):
     @logdebug
     def __exec__(rules: str):
         guard_result = cfn_guard_rs.run_checks(schema, rules)
-        print(guard_result)
         def __render_output(evaluation_result: object):
             non_compliant = {}
             for rule_name, checks in guard_result.not_compliant.items():
@@ -143,15 +115,30 @@ def exec_rules(schema: Dict):
     
 
 @logdebug
-def exec_library():
-    schema = get_schema()
-    kms_eval = exec_rules(schema)
+def exec_library(schemas: Sequence[Dict[str, Any]], rules: Sequence[str]=None):
+    result = []
     
-    output = None
+    
+    def __execute(schema_exec, ruleset):
+        output = None
+        for rules in ruleset:
+            output = schema_exec(rules)
+        return output
+    
+    for schema in schemas:
+        schema_exec = exec_rules(schema=schema)
+        ruleset = get_ruleset() | set(rules if rules else {})
+        output = __execute(schema_exec=schema_exec, ruleset=ruleset)
+        result.append(output)
+    
+    return result    
+    # kms_eval = exec_rules(schema)
+    
+    # output = None
         
-    for rules in get_ruleset():
-        output = kms_eval(rules)
-    return output
+    # for rules in get_ruleset():
+    #     output = kms_eval(rules)
+    # return output
     
 
 

@@ -1,8 +1,5 @@
 import re
-
-from logger import logdebug, LOG
-
-from enum import Enum, auto
+from rpdk.guard_rail.logger import logdebug, LOG
 
 file_pattern = re.compile(r'^(file:\/\/)')
 

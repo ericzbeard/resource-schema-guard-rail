@@ -17,6 +17,7 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     url="https://github.com/ammokhov/resource-schema-guard-rail/",
+    packages=["rpdk.guard_rail"],
     package_dir={'':'src'},
     install_requires=requirements,
     python_requires=">=3.7",

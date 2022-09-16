@@ -1,3 +1,4 @@
+from functools import wraps
 import logging
 
 
@@ -20,6 +21,7 @@ logging.getLogger("").addHandler(console)
 LOG = logging.getLogger(__name__)
 
 def logdebug(func: object):
+    @wraps(func)
     def wrapper(*args, **kwargs):
         log_msg = func.__name__ 
         entry_message = "{} started".format(log_msg)

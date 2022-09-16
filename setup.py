@@ -1,12 +1,22 @@
 #!/usr/bin/env python
+import os.path
+
 from setuptools import setup
 
-
-with open("README.md", "r") as readme_file:
-    readme = readme_file.read()
+HERE = os.path.abspath(os.path.dirname(__file__))
 
 
-requirements = ["cfn-guard-rs>=0.1.2", "colorama>=0.4.1", "Jinja2==2.11.3", "markupsafe==2.0.1", ]
+def read(*parts):
+    with open(os.path.join(HERE, *parts), "r", encoding="utf-8") as file:
+        return file.read()
+
+
+requirements = [
+    "cfn-guard-rs>=0.1.2",
+    "colorama>=0.4.1",
+    "Jinja2==2.11.3",
+    "markupsafe==2.0.1",
+]
 
 setup(
     name="resource-schema-guard-rail",
@@ -14,16 +24,18 @@ setup(
     author="Anton Mokhovikov",
     author_email="ammokhov@amazon.com",
     description="Schema Guard Rail",
-    long_description=readme,
+    long_description=read("README.md"),
     long_description_content_type="text/markdown",
     url="https://github.com/ammokhov/resource-schema-guard-rail/",
     packages=["rpdk.guard_rail"],
-    package_dir={'':'src'},
+    package_dir={"": "src"},
     install_requires=requirements,
     python_requires=">=3.7",
-    
     entry_points={
-        "console_scripts": ["guard-rail-cli = guard_rail:main", "guard-rail = guard_rail:main"]
+        "console_scripts": [
+            "guard-rail-cli = cli:main",
+            "guard-rail = cli:main",
+        ]
     },
     license="Apache License 2.0",
     classifiers=[

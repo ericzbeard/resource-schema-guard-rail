@@ -37,7 +37,7 @@ rule ensure_primary_identifier_is_read_or_create_only when ensure_primary_identi
             "message": "primaryIdentifier MUST be either readOnly or createOnly"
         }
         >>
-    } 
+    }
 }
 
 
@@ -88,7 +88,7 @@ rule ensure_write_and_read_only_intersection_is_empty
             "message": "write/readOnlyProperties MUST NOT have common properties"
         }
         >>
-    }   
+    }
 }
 
 

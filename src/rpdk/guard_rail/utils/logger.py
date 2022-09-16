@@ -1,7 +1,5 @@
-from functools import wraps
 import logging
-
-
+from functools import wraps
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -20,14 +18,16 @@ logging.getLogger("").addHandler(console)
 
 LOG = logging.getLogger(__name__)
 
+
 def logdebug(func: object):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        log_msg = func.__name__ 
-        entry_message = "{} started".format(log_msg)
+        log_msg = func.__name__
+        entry_message = f"{log_msg} started"
         LOG.info(entry_message)
         result = func(*args, **kwargs)
-        exit_message = "{} complete".format(log_msg)
+        exit_message = f"{log_msg} complete"
         LOG.info(exit_message)
         return result
+
     return wrapper

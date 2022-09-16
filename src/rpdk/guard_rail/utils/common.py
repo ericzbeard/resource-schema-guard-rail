@@ -1,26 +1,28 @@
 import re
-from rpdk.guard_rail.logger import logdebug, LOG
 
-file_pattern = re.compile(r'^(file:\/\/)')
+from .logger import LOG, logdebug
+
+FILE_PATTERN = re.compile(r"^(file:\/\/)")
 
 
+GUARD_EXTENSION = re.compile(r"[\s\S]+(.guard)")
+SCHEMA_FILE_PATTERN = re.compile(r"^(.+)\/([^\/]+)(\.json)$")
+GUARD_FILE_PATTERN = re.compile(r"^(.+)\/([^\/]+)(\.guard)$")
 
-guard_extension = re.compile(r'[\s\S]+(.guard)')
-schema_file_pattern = re.compile(r'^(.+)\/([^\/]+)(\.json)$')
-guard_file_pattern = re.compile(r'^(.+)\/([^\/]+)(\.guard)$')
 
-json_path_extract_pattern = r"(?![file:\/])(.+)\/([^\/]+)(\.json)$"
-guard_path_extract_pattern = r"(?![file:\/])(.+)\/([^\/]+)(\.guard)$"
+JSON_PATH_EXTRACT_PATTERN = r"(?![file:\/])(.+)\/([^\/]+)(\.json)$"
+GUARD_PATH_EXTRACT_PATTERN = r"(?![file:\/])(.+)\/([^\/]+)(\.guard)$"
 
 
 @logdebug
-def is_guard_rule(input: str) -> bool:
-    return bool(re.search(guard_extension, input))
+def is_guard_rule(file_input: str) -> bool:
+    return bool(re.search(GUARD_EXTENSION, file_input))
+
 
 @logdebug
 def read_file(file_path: str):
     try:
-        with open(file_path, "r", encoding='utf8') as file:
+        with open(file_path, "r", encoding="utf8") as file:
             return file.read()
     except IOError as ex:
         LOG.info("File not found. Please check the path.")

@@ -3,7 +3,7 @@ let arrays = properties.*[type == 'array']
 rule ensure_properties_do_not_support_multitype {
     properties.* {
         this is_struct
-        
+
         this[*] {
             type exists
             <<
@@ -38,7 +38,7 @@ rule ensure_array_doesnt_use_anyof when %arrays !empty {
         }
         >>
 
-        items.anyOf not exists  
+        items.anyOf not exists
         <<
         {
             "result": "NON_COMPLIANT",
